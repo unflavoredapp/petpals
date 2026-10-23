@@ -1,0 +1,53 @@
+name: iOS Build
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: macos-15
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Show Xcode version
+        run: xcodebuild -version
+
+      - name: List project schemes
+        run: xcodebuild -list -project PetPals.xcodeproj
+
+      - name: Build iOS Simulator app and save full log
+        shell: bash
+        run: |
+          set -o pipefail
+          xcodebuild \
+            -project PetPals.xcodeproj \
+            -scheme PetPals \
+            -sdk iphonesimulator \
+            -configuration Debug \
+            -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath build/DerivedData \
+            CODE_SIGNING_ALLOWED=NO \
+            build 2>&1 | tee build.log
+
+      - name: Upload build log even if build fails
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: petpals-build-log
+          path: build.log
+          if-no-files-found: warn
+
+      - name: Upload simulator app if build succeeds
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: PetPals-iOS-Simulator-App
+          path: build/DerivedData/Build/Products/Debug-iphonesimulator/PetPals.app
+          if-no-files-found: error

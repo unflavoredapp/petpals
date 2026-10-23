@@ -1,0 +1,24 @@
+PetPals build log — local preparation environment
+=================================================
+
+Date: 2026-10-23
+Target: iOS / SwiftUI
+Project: PetPals.xcodeproj
+Scheme requested by GitHub Actions: PetPals
+
+Result: NOT BUILT in this environment.
+
+Environment check:
+- `xcodebuild`: NOT FOUND
+- Host environment: Linux container
+- Swift compiler: present, but Apple SwiftUI/UIKit SDKs and Xcode build system are unavailable.
+
+Error / blocker:
+  xcodebuild: command not found
+
+This is an environment limitation, not a verified compile error in the Swift source. A real compile log will be produced by the included GitHub Actions workflow on a macOS runner. The workflow uploads `build.log` as the `petpals-build-log` artifact even when the build fails.
+
+To see the actual build result:
+1. Push this project to a GitHub repository.
+2. Open the Actions tab and select “iOS Build”.
+3. Open the workflow run; download `petpals-build-log` from Artifacts.
